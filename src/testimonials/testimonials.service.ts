@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTestimonialDto } from './dto/create-testimonial.dto';
 import { UpdateTestimonialDto } from './dto/update-testimonial.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Testimonial } from './entities/testimonial.entity';
 
 @Injectable()
 export class TestimonialsService {
+  constructor(
+    @InjectRepository(Testimonial)
+    private testimonialRepository: Repository<Testimonial>,
+  ) {}
+
   create(createTestimonialDto: CreateTestimonialDto) {
-    return 'This action adds a new testimonial';
+    return this.testimonialRepository.save(createTestimonialDto);
   }
 
   findAll() {
-    return `This action returns all testimonials`;
+    return this.testimonialRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} testimonial`;
+    return this.testimonialRepository.findOne({ where: { id } });
   }
 
   update(id: number, updateTestimonialDto: UpdateTestimonialDto) {
-    return `This action updates a #${id} testimonial`;
+    return this.testimonialRepository.update(id, updateTestimonialDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} testimonial`;
+    return this.testimonialRepository.delete(id);
   }
 }

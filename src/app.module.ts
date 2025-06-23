@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Testimonial } from './testimonials/entities/testimonial.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: process.env.PGDATABASE,
       autoLoadEntities: true,
       synchronize: true,
+      entities: [Testimonial],
       ssl: {
         rejectUnauthorized: false,
       },
