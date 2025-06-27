@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TestimonialsModule } from './testimonials/testimonials.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Testimonial } from './testimonials/entities/testimonial.entity';
+import { ReferencesModule } from './references/references.module';
+import { Reference } from './references/entities/reference.entity';
 
 @Module({
   imports: [
@@ -18,12 +18,12 @@ import { Testimonial } from './testimonials/entities/testimonial.entity';
       database: process.env.PGDATABASE,
       autoLoadEntities: true,
       synchronize: true,
-      entities: [Testimonial],
+      entities: [Reference],
       ssl: {
         rejectUnauthorized: false,
       },
     }),
-    TestimonialsModule,
+    ReferencesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
