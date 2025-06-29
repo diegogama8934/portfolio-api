@@ -11,13 +11,9 @@ export class CreateReferenceDto {
 
   @IsString()
   @IsOptional()
-  image: string;
-
-  @IsString()
-  @IsNotEmpty()
   place: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   role: string;
 }

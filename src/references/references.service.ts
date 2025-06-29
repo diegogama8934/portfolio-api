@@ -4,19 +4,30 @@ import { Repository } from 'typeorm';
 import { CreateReferenceDto } from './dto/create-reference.dto';
 import { UpdateReferenceDto } from './dto/update-reference.dto';
 import { Reference } from './entities/reference.entity';
+import { S3Service } from 'src/s3/s3.service';
 
 @Injectable()
 export class ReferencesService {
   constructor(
     @InjectRepository(Reference)
     private readonly referenceRepository: Repository<Reference>,
+    private readonly s3Service: S3Service,
   ) { }
 
-  async create(createReferenceDto: CreateReferenceDto) {
-    console.log(createReferenceDto);
-    const savedReference =
-      await this.referenceRepository.save(createReferenceDto);
-    console.log(savedReference);
+  async create(
+    createReferenceDto: CreateReferenceDto,
+    file: Express.Multer.File,
+  ) {
+    let imageUrl: string | undefined;
+    console.log(file);
+    if (file) {
+      imageUrl = await this.s3Service.create(file);
+    }
+    console.log(imageUrl);
+    const savedReference = await this.referenceRepository.save({
+      ...createReferenceDto,
+      image: imageUrl,
+    });
 
     return {
       message: 'Reference created successfully',

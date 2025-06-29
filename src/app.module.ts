@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReferencesModule } from './references/references.module';
 import { Reference } from './references/entities/reference.entity';
+import { S3Module } from './s3/s3.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Reference } from './references/entities/reference.entity';
       },
     }),
     ReferencesModule,
+    S3Module,
   ],
   controllers: [AppController],
   providers: [AppService],

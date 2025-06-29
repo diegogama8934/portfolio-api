@@ -32,13 +32,13 @@ export class Reference {
   @IsNotEmpty()
   createdAt: Date;
 
-  @Column()
+  @Column({ nullable: true })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   place: string;
 
-  @Column()
+  @Column({ nullable: true })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   role: string;
 }

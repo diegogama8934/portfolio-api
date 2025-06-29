@@ -6,18 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ReferencesService } from './references.service';
 import { CreateReferenceDto } from './dto/create-reference.dto';
 import { UpdateReferenceDto } from './dto/update-reference.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('references')
 export class ReferencesController {
   constructor(private readonly referencesService: ReferencesService) {}
 
   @Post()
-  create(@Body() createReferenceDto: CreateReferenceDto) {
-    return this.referencesService.create(createReferenceDto);
+  @UseInterceptors(FileInterceptor('image'))
+  create(
+    @Body() createReferenceDto: CreateReferenceDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.referencesService.create(createReferenceDto, file);
   }
 
   @Get()
