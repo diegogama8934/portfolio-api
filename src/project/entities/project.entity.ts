@@ -14,4 +14,13 @@ export class Project {
 
   @OneToMany(() => Reference, (reference) => reference.project)
   references: Reference[];
+
+  @Column({ nullable: true })
+  enResume: string;
+
+  @Column({ nullable: true })
+  esResume: string;
+
+  @Column({ default: false })
+  published: boolean;
 }

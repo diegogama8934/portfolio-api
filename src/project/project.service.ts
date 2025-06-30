@@ -21,14 +21,13 @@ export class ProjectService {
     };
 
     const savedProject = await this.projectRepository.save(projectData);
-
     if (file) {
       const image = await this.s3Service.createImageToProject(
         file,
         savedProject.id,
       );
-      await this.projectRepository.update(savedProject, { image });
-      projectData.image = image;
+      await this.projectRepository.update(savedProject.id, { image });
+      savedProject.image = image;
     }
 
     return {
