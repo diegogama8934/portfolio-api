@@ -15,25 +15,16 @@ export class S3Service {
 
   private bucket = process.env.BUCKET_S3_NAME;
 
-  async create(file: Express.Multer.File) {
-    console.log(process.env.AWS_ACCESS_KEY);
-    const reducedBuffer = await sharp(file.buffer)
-      .resize({
-        width: 400,
-        height: 400,
-        fit: 'cover',
-      })
-      .toBuffer();
-    const key = `${uuidv4()}-${file.originalname}`;
-    await this.s3.send(
-      new PutObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-        Body: reducedBuffer,
-        ContentType: file.mimetype,
-      }),
-    );
-    return `https://${this.bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+  private getFilePublicURL(path: string) {
+    return `https://${this.bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${path}`;
+  }
+
+  getFileKey(fileName: string) {
+    return `${uuidv4()}-${fileName}`;
+  }
+
+  async getReducedBuffer(file: Express.Multer.File, width: number) {
+    return await sharp(file.buffer).resize({ width }).toBuffer();
   }
 
   findAll() {
@@ -42,5 +33,59 @@ export class S3Service {
 
   remove(id: number) {
     return `This action removes a #${id} s3`;
+  }
+
+  async createImageToProfileReference(file: Express.Multer.File) {
+    const path = `references/profile/${this.getFileKey(file.originalname)}`;
+
+    const reducedBuffer = await this.getReducedBuffer(file, 400);
+
+    await this.s3.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: path,
+        Body: reducedBuffer,
+        ContentType: file.mimetype,
+      }),
+    );
+
+    return this.getFilePublicURL(path);
+  }
+
+  async createImageToProjectReference(
+    file: Express.Multer.File,
+    projectId: string,
+  ) {
+    const path = `references/project/${projectId}/${this.getFileKey(file.originalname)}`;
+
+    const reducedBuffer = await this.getReducedBuffer(file, 400);
+
+    await this.s3.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: path,
+        Body: reducedBuffer,
+        ContentType: file.mimetype,
+      }),
+    );
+
+    return this.getFilePublicURL(path);
+  }
+
+  async createImageToProject(file: Express.Multer.File, projectId: string) {
+    const path = `projects/${projectId}/${this.getFileKey(file.originalname)}`;
+
+    const reducedBuffer = await this.getReducedBuffer(file, 1200);
+
+    await this.s3.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: path,
+        Body: reducedBuffer,
+        ContentType: file.mimetype,
+      }),
+    );
+
+    return this.getFilePublicURL(path);
   }
 }

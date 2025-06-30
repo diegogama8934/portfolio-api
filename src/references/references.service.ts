@@ -5,26 +5,55 @@ import { CreateReferenceDto } from './dto/create-reference.dto';
 import { UpdateReferenceDto } from './dto/update-reference.dto';
 import { Reference } from './entities/reference.entity';
 import { S3Service } from 'src/s3/s3.service';
+import { Project } from 'src/project/entities/project.entity';
 
 @Injectable()
 export class ReferencesService {
   constructor(
     @InjectRepository(Reference)
     private readonly referenceRepository: Repository<Reference>,
+    @InjectRepository(Project)
+    private readonly projectRepository: Repository<Project>,
     private readonly s3Service: S3Service,
   ) { }
 
-  async create(
+  async createProfileReference(
     createReferenceDto: CreateReferenceDto,
     file: Express.Multer.File,
   ) {
-    let imageUrl: string | undefined;
+    let image: string | null;
+
     if (file) {
-      imageUrl = await this.s3Service.create(file);
+      image = await this.s3Service.createImageToProfileReference(file);
     }
+
     const savedReference = await this.referenceRepository.save({
       ...createReferenceDto,
-      image: imageUrl,
+      image: image,
+    });
+
+    return {
+      message: 'Reference created successfully',
+      data: savedReference,
+      success: true,
+    };
+  }
+
+  async createProjectReference(
+    createReferenceDTO: CreateReferenceDto,
+    file: Express.Multer.File,
+  ) {
+    let image: string | null;
+
+    if (file) {
+      image = await this.s3Service.createImageToProjectReference(
+        file,
+        createReferenceDTO.projectId,
+      );
+    }
+    const savedReference = await this.referenceRepository.save({
+      ...createReferenceDTO,
+      image: image,
     });
 
     return {

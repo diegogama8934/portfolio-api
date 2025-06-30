@@ -1,9 +1,11 @@
 import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Project } from 'src/project/entities/project.entity';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -36,6 +38,12 @@ export class Reference {
   @IsString()
   @IsOptional()
   place: string;
+
+  @ManyToOne(() => Project, (project) => project.references, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  project: Project;
 
   @Column({ nullable: true })
   @IsString()

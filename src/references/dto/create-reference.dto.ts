@@ -16,4 +16,8 @@ export class CreateReferenceDto {
   @IsString()
   @IsOptional()
   role: string;
+
+  @IsString()
+  @IsOptional()
+  projectId: string;
 }

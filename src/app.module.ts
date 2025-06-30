@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReferencesModule } from './references/references.module';
 import { Reference } from './references/entities/reference.entity';
 import { S3Module } from './s3/s3.module';
+import { ProjectModule } from './project/project.module';
+import { Project } from './project/entities/project.entity';
 
 @Module({
   imports: [
@@ -19,13 +21,14 @@ import { S3Module } from './s3/s3.module';
       database: process.env.PGDATABASE,
       autoLoadEntities: true,
       synchronize: true,
-      entities: [Reference],
+      entities: [Reference, Project],
       ssl: {
         rejectUnauthorized: false,
       },
     }),
     ReferencesModule,
     S3Module,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],

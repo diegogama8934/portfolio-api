@@ -16,15 +16,31 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('references')
 export class ReferencesController {
-  constructor(private readonly referencesService: ReferencesService) {}
+  constructor(private readonly referencesService: ReferencesService) { }
 
-  @Post()
+  @Post('profile')
   @UseInterceptors(FileInterceptor('image'))
-  create(
+  createToProfile(
     @Body() createReferenceDto: CreateReferenceDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.referencesService.create(createReferenceDto, file);
+    return this.referencesService.createProfileReference(
+      createReferenceDto,
+      file,
+    );
+  }
+
+  @Post('project/:id')
+  @UseInterceptors(FileInterceptor('image'))
+  createToProject(
+    @Param('id') id: string,
+    @Body() createReferenceDTO: CreateReferenceDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.referencesService.createProjectReference(
+      { ...createReferenceDTO, projectId: id },
+      file,
+    );
   }
 
   @Get()
