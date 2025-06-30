@@ -19,11 +19,9 @@ export class ReferencesService {
     file: Express.Multer.File,
   ) {
     let imageUrl: string | undefined;
-    console.log(file);
     if (file) {
       imageUrl = await this.s3Service.create(file);
     }
-    console.log(imageUrl);
     const savedReference = await this.referenceRepository.save({
       ...createReferenceDto,
       image: imageUrl,

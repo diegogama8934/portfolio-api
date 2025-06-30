@@ -5,10 +5,18 @@ import * as sharp from 'sharp';
 
 @Injectable()
 export class S3Service {
-  private s3 = new S3Client({});
+  private s3 = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
+
   private bucket = process.env.BUCKET_S3_NAME;
 
   async create(file: Express.Multer.File) {
+    console.log(process.env.AWS_ACCESS_KEY);
     const reducedBuffer = await sharp(file.buffer)
       .resize({
         width: 400,
